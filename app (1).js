@@ -81,16 +81,21 @@ async function fazerCadastro() {
 
   setBtnLoading('btn-cadastro', true);
 
-  // Cria conta no Supabase Auth
-  const { data, error } = await db.auth.signUp({ email, password: senha });
+  // Passa o nome como metadata — o trigger no banco cria o perfil automaticamente
+  const { data, error } = await db.auth.signUp({
+    email,
+    password: senha,
+    options: { data: { nome } },
+  });
+
   if (error) {
     setBtnLoading('btn-cadastro', false);
     return toast('Erro ao criar conta: ' + traduzirErro(error.message));
   }
 
-  // Cria perfil na tabela perfis
+  // Garante o perfil mesmo se o trigger falhar (fallback)
   if (data.user) {
-    await db.from('perfis').insert({ id: data.user.id, nome });
+    await db.from('perfis').upsert({ id: data.user.id, nome }, { onConflict: 'id' });
   }
 
   setBtnLoading('btn-cadastro', false);
@@ -105,9 +110,17 @@ async function fazerLogout() {
 //  ENTRAR / SAIR DO APP
 // ════════════════════════════════════════════════════════════════════════
 async function entrarNoApp(user) {
-  // Busca perfil
-  const { data: perfil } = await db.from('perfis').select('nome').eq('id', user.id).single();
-  const nome = perfil?.nome || user.email;
+  // Busca perfil existente
+  let { data: perfil } = await db.from('perfis').select('nome').eq('id', user.id).single();
+
+  // Se não existe (usuário antigo ou trigger falhou), cria agora
+  if (!perfil) {
+    const nomeMeta = user.user_metadata?.nome || user.email.split('@')[0];
+    await db.from('perfis').upsert({ id: user.id, nome: nomeMeta }, { onConflict: 'id' });
+    perfil = { nome: nomeMeta };
+  }
+
+  const nome = perfil.nome || user.email;
 
   usuarioAtual = { id: user.id, email: user.email, nome };
   document.getElementById('user-nome').textContent = '👤 ' + nome;
