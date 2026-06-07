@@ -1,103 +1,100 @@
-# 🏆 Bolão Copa 2026 — Guia de Setup Completo
+# 🏆 Bolão Copa 2026 — Guia de Setup (com Login)
 
 ## O que você vai precisar
-- Conta gratuita no [Supabase](https://supabase.com) (backend/banco)
-- Conta gratuita no [Netlify](https://netlify.com) ou [Vercel](https://vercel.com) (hospedagem)
+- Conta gratuita no [Supabase](https://supabase.com) — banco + auth
+- Conta gratuita no [Vercel](https://vercel.com) ou [Netlify](https://netlify.com) — hospedagem
 
-Tempo estimado: **10 minutos**
+Tempo estimado: **15 minutos**
 
 ---
 
 ## PASSO 1 — Criar projeto no Supabase
 
-1. Acesse [app.supabase.com](https://app.supabase.com) e clique em **New Project**
-2. Escolha um nome (ex: `bolao-copa2026`) e uma senha forte para o banco
-3. Selecione a região **South America (São Paulo)** para menor latência
-4. Clique em **Create new project** e aguarde ~2 minutos
+1. Acesse [app.supabase.com](https://app.supabase.com) → **New Project**
+2. Nome: `bolao-copa2026` · Região: **South America (São Paulo)**
+3. Aguarde ~2 min até o projeto ficar pronto
 
 ---
 
 ## PASSO 2 — Criar as tabelas
 
-1. No painel do projeto, vá em **SQL Editor** (menu lateral esquerdo)
-2. Clique em **New Query**
-3. Copie e cole todo o conteúdo do arquivo `schema.sql` deste projeto
-4. Clique em **Run** (ou Ctrl+Enter)
-5. Você deve ver a mensagem `Success. No rows returned`
+1. Vá em **SQL Editor → New Query**
+2. Cole todo o conteúdo do arquivo `schema.sql`
+3. Clique em **Run** — deve aparecer `Success`
 
 ---
 
-## PASSO 3 — Pegar as credenciais
+## PASSO 3 — Configurar o Auth
 
-1. No painel, vá em **Project Settings → API**
-2. Copie os dois valores:
-   - **Project URL** → algo como `https://xyzxyz.supabase.co`
-   - **anon public** (em "Project API keys")
+1. No painel do Supabase vá em **Authentication → Providers**
+2. Confirme que **Email** está habilitado (vem ativo por padrão)
+3. Em **Authentication → Email Templates** você pode personalizar o e-mail de confirmação (opcional)
+
+> **Dica:** Se não quiser que os amigos precisem confirmar e-mail, vá em
+> **Authentication → Settings** e desative a opção **"Enable email confirmations"**.
 
 ---
 
-## PASSO 4 — Configurar o app
+## PASSO 4 — Pegar as credenciais
 
-Abra o arquivo `app.js` e substitua as duas primeiras linhas:
+1. Vá em **Project Settings → API**
+2. Copie:
+   - **Project URL** → `https://xyzxyz.supabase.co`
+   - **anon public** (em Project API Keys)
+
+---
+
+## PASSO 5 — Configurar o app.js
+
+Abra `app.js` e edite as três primeiras constantes:
 
 ```js
-// ANTES:
-const SUPABASE_URL      = 'COLE_SUA_URL_AQUI';
-const SUPABASE_ANON_KEY = 'COLE_SUA_ANON_KEY_AQUI';
-
-// DEPOIS (com seus dados reais):
-const SUPABASE_URL      = 'https://xyzxyz.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+const SUPABASE_URL      = 'https://xyzxyz.supabase.co';   // sua URL
+const SUPABASE_ANON_KEY = 'eyJhbGci...';                  // sua anon key
+const CODIGO_CONVITE    = 'copa2026';                      // mude para o código secreto que vai passar para os amigos
 ```
 
 ---
 
-## PASSO 5 — Fazer o deploy
+## PASSO 6 — Deploy
 
-### Opção A: Netlify (mais fácil)
-1. Acesse [app.netlify.com](https://app.netlify.com)
-2. Clique em **Add new site → Deploy manually**
-3. Arraste a pasta `copa2026` inteira para a área de upload
-4. Pronto! O Netlify te dá um link como `https://bolao-xyz.netlify.app`
+### Netlify (mais fácil, sem GitHub)
+1. Acesse [app.netlify.com](https://app.netlify.com) → **Add new site → Deploy manually**
+2. Arraste a pasta `copa2026` inteira para a área de upload
+3. Pronto — você recebe um link como `https://bolao-xyz.netlify.app`
 
-### Opção B: Vercel
-1. Acesse [vercel.com](https://vercel.com) e faça login com GitHub
-2. Faça push da pasta para um repositório GitHub
-3. No Vercel, clique em **Add New Project** e selecione o repo
+### Vercel (via GitHub)
+1. Suba os arquivos num repositório GitHub
+2. No Vercel → **Add New Project** → selecione o repo
+3. Em **Root Directory** coloque `copa2026` (se a pasta estiver dentro do repo)
 4. Clique em **Deploy**
 
-### Opção C: GitHub Pages
-1. Crie um repositório no GitHub
-2. Suba os 4 arquivos (index.html, style.css, app.js, jogos.js) na raiz
-3. Vá em **Settings → Pages → Branch: main** e salve
-4. Acesse em `https://seu-usuario.github.io/nome-do-repo`
+---
+
+## PASSO 7 — Compartilhar com os amigos
+
+Mande para cada amigo:
+- O **link** do site
+- O **código de convite** (o que você definiu em `CODIGO_CONVITE`)
+
+Cada um cria a própria conta com e-mail e senha. O ranking aparece para todos, mas os bilhetes detalhados são visíveis apenas para o dono.
 
 ---
 
-## PASSO 6 — Compartilhar com os amigos
+## Estrutura dos arquivos
 
-Manda o link gerado no deploy para todo mundo. Todos que abrirem o link verão o mesmo ranking em tempo real — qualquer bilhete adicionado ou editado aparece na tela de todos instantaneamente.
-
----
-
-## Dicas extras
-
-### Habilitar Realtime no Supabase
-Se os dados não atualizarem automaticamente:
-1. Vá em **Database → Replication**
-2. Clique em **0 tables** ao lado de `supabase_realtime`
-3. Ative as tabelas `participantes` e `bilhetes`
-
-### Quero restringir quem pode editar
-Por padrão o sistema é aberto (qualquer um que tiver o link pode adicionar bilhetes). Se quiser adicionar senha/login, avisa que posso adicionar autenticação com senha simples.
-
-### Arquivos do projeto
 ```
 copa2026/
-├── index.html   → Estrutura da página
-├── style.css    → Visual/tema escuro
-├── app.js       → Lógica + integração Supabase
-├── jogos.js     → Tabela completa dos 72 jogos
-├── schema.sql   → Script para criar as tabelas
-└── SETUP.md     → Este guia
+├── index.html    → Estrutura HTML (tela de login + app)
+├── style.css     → Visual tema escuro
+├── app.js        → Lógica completa + Supabase Auth
+├── jogos.js      → 72 jogos da fase de grupos
+├── schema.sql    → SQL para criar tabelas e políticas de segurança
+└── SETUP.md      → Este guia
 ```
+
+## Como funciona a segurança
+
+- **Row Level Security (RLS):** cada usuário só lê e escreve seus próprios bilhetes no banco, mesmo que alguém tente fazer chamadas diretas à API.
+- **Ranking público via VIEW:** uma view SQL agrega só os totais (greens/reds), sem expor detalhes de nenhum bilhete.
+- **Código de convite:** verificado no front-end antes de criar a conta. Só quem tiver o código consegue se cadastrar.

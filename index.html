@@ -3,157 +3,189 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Copa 2026 — Bolão dos Brothers</title>
+  <title>Bolão Copa 2026</title>
   <link rel="stylesheet" href="style.css" />
-  <!-- Supabase SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body>
 
-  <!-- Loading overlay -->
+  <!-- Overlays globais -->
   <div id="loading-overlay" class="loading-overlay">
     <div class="spinner"></div>
-    <p>Conectando ao servidor...</p>
+    <p>Conectando...</p>
   </div>
-
-  <!-- Toast de erro -->
   <div id="toast" class="toast hidden"></div>
 
-  <!-- Banner de configuração -->
-  <div id="config-banner" class="config-banner hidden">
-    ⚙️ <strong>Configure o Supabase!</strong>
-    Abra <code>app.js</code> e preencha <code>SUPABASE_URL</code> e <code>SUPABASE_ANON_KEY</code>.
-    Veja o arquivo <code>SETUP.md</code> para o passo a passo.
-  </div>
+  <!-- ══════════════════════════════════════════
+       TELA DE AUTH (login / cadastro)
+  ══════════════════════════════════════════ -->
+  <div id="tela-auth" class="tela-auth hidden">
+    <div class="auth-box">
+      <div class="auth-logo">🏆</div>
+      <h1>Bolão Copa 2026</h1>
+      <p class="auth-sub">EUA · México · Canadá</p>
 
-  <header>
-    <div class="header-inner">
-      <div class="logo">
-        <span class="trophy">🏆</span>
-        <div>
-          <h1>Bolão 2026</h1>
-          <p>Copa do Mundo · EUA · MEX · CAN</p>
-        </div>
+      <!-- Abas -->
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-auth="login">Entrar</button>
+        <button class="auth-tab" data-auth="cadastro">Criar conta</button>
       </div>
-      <div class="header-right">
-        <span id="sync-badge" class="sync-badge">🟢 Ao vivo</span>
-        <nav>
-          <button class="nav-btn active" data-tab="ranking">Ranking</button>
-          <button class="nav-btn" data-tab="apostas">Apostas</button>
-          <button class="nav-btn" data-tab="jogos">Jogos</button>
-        </nav>
+
+      <!-- Login -->
+      <div id="form-login" class="auth-form">
+        <div class="form-group">
+          <label>E-mail</label>
+          <input type="email" id="login-email" placeholder="seu@email.com" autocomplete="email" />
+        </div>
+        <div class="form-group">
+          <label>Senha</label>
+          <input type="password" id="login-senha" placeholder="••••••••" autocomplete="current-password" />
+        </div>
+        <button class="btn btn-primary btn-block" id="btn-login" data-label="Entrar" onclick="fazerLogin()">Entrar</button>
+      </div>
+
+      <!-- Cadastro -->
+      <div id="form-cadastro" class="auth-form hidden">
+        <div class="form-group">
+          <label>Seu nome</label>
+          <input type="text" id="cad-nome" placeholder="Como quer aparecer no ranking" maxlength="30" />
+        </div>
+        <div class="form-group">
+          <label>E-mail</label>
+          <input type="email" id="cad-email" placeholder="seu@email.com" autocomplete="email" />
+        </div>
+        <div class="form-group">
+          <label>Senha</label>
+          <input type="password" id="cad-senha" placeholder="mínimo 6 caracteres" autocomplete="new-password" />
+        </div>
+        <div class="form-group">
+          <label>Código de convite</label>
+          <input type="text" id="cad-convite" placeholder="Peça o código para o organizador" />
+        </div>
+        <button class="btn btn-primary btn-block" id="btn-cadastro" data-label="Criar conta" onclick="fazerCadastro()">Criar conta</button>
       </div>
     </div>
-  </header>
+  </div>
 
-  <main>
+  <!-- ══════════════════════════════════════════
+       APP PRINCIPAL
+  ══════════════════════════════════════════ -->
+  <div id="tela-app" class="hidden">
 
-    <!-- ===== RANKING ===== -->
-    <section id="tab-ranking" class="tab active">
-      <div class="section-title">
-        <h2>🥇 Ranking Geral</h2>
-        <p>Ordenado por quantidade de greens · atualiza em tempo real</p>
-      </div>
-      <div id="ranking-list" class="ranking-list">
-        <p class="empty-msg">Carregando...</p>
-      </div>
-    </section>
-
-    <!-- ===== APOSTAS ===== -->
-    <section id="tab-apostas" class="tab">
-      <div class="section-title">
-        <h2>📋 Gerenciar Apostas</h2>
-      </div>
-
-      <!-- Adicionar participante -->
-      <div class="card">
-        <h3>Novo Participante</h3>
-        <div class="form-row">
-          <input type="text" id="input-nome" placeholder="Nome do participante" maxlength="30" />
-          <button class="btn btn-primary" id="btn-add-part" data-label="Adicionar" onclick="adicionarParticipante()">Adicionar</button>
+    <header>
+      <div class="header-inner">
+        <div class="logo">
+          <span class="trophy">🏆</span>
+          <div>
+            <h1>Bolão 2026</h1>
+            <p>Copa do Mundo · EUA · MEX · CAN</p>
+          </div>
+        </div>
+        <div class="header-right">
+          <span id="sync-badge" class="sync-badge">🟢 Ao vivo</span>
+          <span id="user-nome" class="user-nome"></span>
+          <button class="btn btn-sm" onclick="fazerLogout()">Sair</button>
+          <nav>
+            <button class="nav-btn active" data-tab="ranking">Ranking</button>
+            <button class="nav-btn" data-tab="apostas">Meus Bilhetes</button>
+            <button class="nav-btn" data-tab="jogos">Jogos</button>
+          </nav>
         </div>
       </div>
+    </header>
 
-      <!-- Registrar bilhete -->
-      <div class="card">
-        <h3>Registrar Bilhete</h3>
-        <div class="form-grid">
-          <div class="form-group">
-            <label>Participante</label>
-            <select id="sel-participante">
-              <option value="">— selecione —</option>
-            </select>
+    <main>
+
+      <!-- RANKING -->
+      <section id="tab-ranking" class="tab active">
+        <div class="section-title">
+          <h2>🥇 Ranking Geral</h2>
+          <p>Greens e reds de todos · bilhetes detalhados são privados</p>
+        </div>
+        <div id="ranking-list" class="ranking-list">
+          <p class="empty-msg">Carregando...</p>
+        </div>
+      </section>
+
+      <!-- MEUS BILHETES -->
+      <section id="tab-apostas" class="tab">
+        <div class="section-title">
+          <h2>📋 Meus Bilhetes</h2>
+          <p>Só você vê seus bilhetes detalhados</p>
+        </div>
+
+        <div class="card">
+          <h3>Novo Bilhete</h3>
+          <div class="form-grid">
+            <div class="form-group" style="grid-column:1/-1">
+              <label>Descrição</label>
+              <input type="text" id="input-bilhete" placeholder='Ex: Brasil -1.5 @1.80 · Alemanha vence @2.10' />
+            </div>
+            <div class="form-group">
+              <label>Resultado</label>
+              <select id="sel-resultado">
+                <option value="">⏳ Aguardando</option>
+                <option value="green">✅ Green</option>
+                <option value="red">❌ Red</option>
+                <option value="void">↩️ Void</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Jogo (opcional)</label>
+              <select id="sel-jogo">
+                <option value="">— nenhum —</option>
+              </select>
+            </div>
           </div>
-          <div class="form-group">
-            <label>Descrição do Bilhete</label>
-            <input type="text" id="input-bilhete" placeholder='Ex: Brasil -1.5 @1.80' />
-          </div>
-          <div class="form-group">
-            <label>Resultado</label>
-            <select id="sel-resultado">
-              <option value="">⏳ Aguardando</option>
+          <button class="btn btn-primary" id="btn-add-bilhete" data-label="Salvar Bilhete" onclick="registrarBilhete()">Salvar Bilhete</button>
+        </div>
+
+        <div class="card">
+          <h3>Histórico</h3>
+          <div class="filter-row">
+            <select id="filtro-resultado" onchange="renderBilhetes()">
+              <option value="">Todos</option>
               <option value="green">✅ Green</option>
               <option value="red">❌ Red</option>
               <option value="void">↩️ Void</option>
+              <option value="pendente">⏳ Aguardando</option>
             </select>
           </div>
-          <div class="form-group">
-            <label>Jogo (opcional)</label>
-            <select id="sel-jogo">
-              <option value="">— nenhum —</option>
-            </select>
+          <!-- mini stats -->
+          <div id="mini-stats" class="mini-stats"></div>
+          <div id="lista-bilhetes">
+            <p class="empty-msg">Nenhum bilhete ainda. Adicione o primeiro!</p>
           </div>
         </div>
-        <button class="btn btn-primary" id="btn-add-bilhete" data-label="Salvar Bilhete" onclick="registrarBilhete()">Salvar Bilhete</button>
-      </div>
+      </section>
 
-      <!-- Lista de bilhetes -->
-      <div class="card">
-        <h3>Bilhetes Registrados</h3>
+      <!-- JOGOS -->
+      <section id="tab-jogos" class="tab">
+        <div class="section-title">
+          <h2>⚽ Tabela de Jogos</h2>
+          <p>Fase de Grupos — Copa do Mundo 2026 (Horário de Brasília)</p>
+        </div>
         <div class="filter-row">
-          <select id="filtro-participante" onchange="renderBilhetes()">
-            <option value="">Todos os participantes</option>
-          </select>
-          <select id="filtro-resultado" onchange="renderBilhetes()">
-            <option value="">Todos</option>
-            <option value="green">✅ Green</option>
-            <option value="red">❌ Red</option>
-            <option value="void">↩️ Void</option>
-            <option value="pendente">⏳ Aguardando</option>
+          <input type="text" id="filtro-jogo" placeholder="Buscar time ou cidade..." oninput="renderJogos()" />
+          <select id="filtro-rodada" onchange="renderJogos()">
+            <option value="">Todas as rodadas</option>
+            <option value="1">1ª Rodada</option>
+            <option value="2">2ª Rodada</option>
+            <option value="3">3ª Rodada</option>
           </select>
         </div>
-        <div id="lista-bilhetes">
-          <p class="empty-msg">Nenhum bilhete registrado.</p>
-        </div>
-      </div>
-    </section>
+        <div id="lista-jogos"></div>
+      </section>
 
-    <!-- ===== JOGOS ===== -->
-    <section id="tab-jogos" class="tab">
-      <div class="section-title">
-        <h2>⚽ Tabela de Jogos</h2>
-        <p>Fase de Grupos — Copa do Mundo 2026 (Horários de Brasília)</p>
-      </div>
-      <div class="filter-row">
-        <input type="text" id="filtro-jogo" placeholder="Buscar time ou cidade..." oninput="renderJogos()" />
-        <select id="filtro-rodada" onchange="renderJogos()">
-          <option value="">Todas as rodadas</option>
-          <option value="1">1ª Rodada</option>
-          <option value="2">2ª Rodada</option>
-          <option value="3">3ª Rodada</option>
-        </select>
-      </div>
-      <div id="lista-jogos"></div>
-    </section>
+    </main>
+  </div><!-- /tela-app -->
 
-  </main>
-
-  <!-- Modal de edição -->
+  <!-- Modal edição -->
   <div id="modal-overlay" class="modal-overlay hidden">
     <div class="modal">
       <h3>Editar Bilhete</h3>
       <div class="form-grid">
-        <div class="form-group">
+        <div class="form-group" style="grid-column:1/-1">
           <label>Descrição</label>
           <input type="text" id="edit-bilhete" />
         </div>

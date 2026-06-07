@@ -337,3 +337,124 @@ select option { background: var(--surface); }
   border: 1px solid var(--border); padding: 4px 10px;
   border-radius: 999px; color: var(--text2);
 }
+
+/* ══════════════════════════════════════════
+   AUTH
+══════════════════════════════════════════ */
+.tela-auth {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: radial-gradient(ellipse at 60% 20%, #1e3a5f 0%, var(--bg) 60%);
+}
+.tela-auth.hidden { display: none; }
+
+.auth-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 36px 32px;
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+}
+
+.auth-logo { font-size: 3rem; margin-bottom: 8px; }
+.auth-box h1 { font-size: 1.5rem; font-weight: 800; color: var(--accent); }
+.auth-sub { color: var(--text2); font-size: .85rem; margin-top: 4px; margin-bottom: 24px; }
+
+.auth-tabs {
+  display: flex;
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 4px;
+  gap: 4px;
+  margin-bottom: 24px;
+}
+.auth-tab {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text2);
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: .9rem;
+  transition: all .15s;
+}
+.auth-tab.active {
+  background: var(--accent2);
+  color: #fff;
+  font-weight: 600;
+}
+
+.auth-form { text-align: left; }
+.auth-form .form-group { margin-bottom: 14px; }
+.btn-block { width: 100%; margin-top: 6px; padding: 11px; font-size: 1rem; }
+
+/* ══════════════════════════════════════════
+   USER / HEADER EXTRAS
+══════════════════════════════════════════ */
+.user-nome {
+  font-size: .85rem;
+  color: var(--text2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px;
+}
+
+/* ══════════════════════════════════════════
+   RANK: destaque "você"
+══════════════════════════════════════════ */
+.rank-eu { box-shadow: 0 0 0 1px var(--accent); }
+.badge-eu {
+  font-size: .7rem;
+  background: var(--accent2);
+  color: #fff;
+  padding: 1px 7px;
+  border-radius: 999px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+/* ══════════════════════════════════════════
+   MINI STATS (painel de bilhetes)
+══════════════════════════════════════════ */
+.mini-stats {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+.mini-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  min-width: 60px;
+}
+.ms-num {
+  font-size: 1.6rem;
+  font-weight: 800;
+  line-height: 1;
+}
+.ms-num.green  { color: var(--green); }
+.ms-num.red    { color: var(--red); }
+.ms-num.accent { color: var(--accent); }
+.ms-label {
+  font-size: .7rem;
+  color: var(--text2);
+  margin-top: 3px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+/* ══════════════════════════════════════════
+   TELA APP
+══════════════════════════════════════════ */
+#tela-app.hidden { display: none; }
