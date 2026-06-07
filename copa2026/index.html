@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Copa 2026 — Bolão dos Brothers</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+
+  <!-- Loading overlay -->
+  <div id="loading-overlay" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>Conectando ao servidor...</p>
+  </div>
+
+  <!-- Toast de erro -->
+  <div id="toast" class="toast hidden"></div>
+
+  <!-- Banner de configuração -->
+  <div id="config-banner" class="config-banner hidden">
+    ⚙️ <strong>Configure o Supabase!</strong>
+    Abra <code>app.js</code> e preencha <code>SUPABASE_URL</code> e <code>SUPABASE_ANON_KEY</code>.
+    Veja o arquivo <code>SETUP.md</code> para o passo a passo.
+  </div>
+
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <span class="trophy">🏆</span>
+        <div>
+          <h1>Bolão 2026</h1>
+          <p>Copa do Mundo · EUA · MEX · CAN</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <span id="sync-badge" class="sync-badge">🟢 Ao vivo</span>
+        <nav>
+          <button class="nav-btn active" data-tab="ranking">Ranking</button>
+          <button class="nav-btn" data-tab="apostas">Apostas</button>
+          <button class="nav-btn" data-tab="jogos">Jogos</button>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ===== RANKING ===== -->
+    <section id="tab-ranking" class="tab active">
+      <div class="section-title">
+        <h2>🥇 Ranking Geral</h2>
+        <p>Ordenado por quantidade de greens · atualiza em tempo real</p>
+      </div>
+      <div id="ranking-list" class="ranking-list">
+        <p class="empty-msg">Carregando...</p>
+      </div>
+    </section>
+
+    <!-- ===== APOSTAS ===== -->
+    <section id="tab-apostas" class="tab">
+      <div class="section-title">
+        <h2>📋 Gerenciar Apostas</h2>
+      </div>
+
+      <!-- Adicionar participante -->
+      <div class="card">
+        <h3>Novo Participante</h3>
+        <div class="form-row">
+          <input type="text" id="input-nome" placeholder="Nome do participante" maxlength="30" />
+          <button class="btn btn-primary" id="btn-add-part" data-label="Adicionar" onclick="adicionarParticipante()">Adicionar</button>
+        </div>
+      </div>
+
+      <!-- Registrar bilhete -->
+      <div class="card">
+        <h3>Registrar Bilhete</h3>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Participante</label>
+            <select id="sel-participante">
+              <option value="">— selecione —</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Descrição do Bilhete</label>
+            <input type="text" id="input-bilhete" placeholder='Ex: Brasil -1.5 @1.80' />
+          </div>
+          <div class="form-group">
+            <label>Resultado</label>
+            <select id="sel-resultado">
+              <option value="">⏳ Aguardando</option>
+              <option value="green">✅ Green</option>
+              <option value="red">❌ Red</option>
+              <option value="void">↩️ Void</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Jogo (opcional)</label>
+            <select id="sel-jogo">
+              <option value="">— nenhum —</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-primary" id="btn-add-bilhete" data-label="Salvar Bilhete" onclick="registrarBilhete()">Salvar Bilhete</button>
+      </div>
+
+      <!-- Lista de bilhetes -->
+      <div class="card">
+        <h3>Bilhetes Registrados</h3>
+        <div class="filter-row">
+          <select id="filtro-participante" onchange="renderBilhetes()">
+            <option value="">Todos os participantes</option>
+          </select>
+          <select id="filtro-resultado" onchange="renderBilhetes()">
+            <option value="">Todos</option>
+            <option value="green">✅ Green</option>
+            <option value="red">❌ Red</option>
+            <option value="void">↩️ Void</option>
+            <option value="pendente">⏳ Aguardando</option>
+          </select>
+        </div>
+        <div id="lista-bilhetes">
+          <p class="empty-msg">Nenhum bilhete registrado.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== JOGOS ===== -->
+    <section id="tab-jogos" class="tab">
+      <div class="section-title">
+        <h2>⚽ Tabela de Jogos</h2>
+        <p>Fase de Grupos — Copa do Mundo 2026 (Horários de Brasília)</p>
+      </div>
+      <div class="filter-row">
+        <input type="text" id="filtro-jogo" placeholder="Buscar time ou cidade..." oninput="renderJogos()" />
+        <select id="filtro-rodada" onchange="renderJogos()">
+          <option value="">Todas as rodadas</option>
+          <option value="1">1ª Rodada</option>
+          <option value="2">2ª Rodada</option>
+          <option value="3">3ª Rodada</option>
+        </select>
+      </div>
+      <div id="lista-jogos"></div>
+    </section>
+
+  </main>
+
+  <!-- Modal de edição -->
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div class="modal">
+      <h3>Editar Bilhete</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Descrição</label>
+          <input type="text" id="edit-bilhete" />
+        </div>
+        <div class="form-group">
+          <label>Resultado</label>
+          <select id="edit-resultado">
+            <option value="">⏳ Aguardando</option>
+            <option value="green">✅ Green</option>
+            <option value="red">❌ Red</option>
+            <option value="void">↩️ Void</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn" onclick="fecharModal()">Cancelar</button>
+        <button class="btn btn-primary" id="btn-salvar-edicao" data-label="Salvar" onclick="salvarEdicao()">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="jogos.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
