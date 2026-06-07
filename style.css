@@ -349,50 +349,117 @@ select option { background: var(--surface); }
   padding: 24px;
   background: radial-gradient(ellipse at 60% 20%, #1e3a5f 0%, var(--bg) 60%);
 }
-.tela-auth.hidden { display: none; }
+.tela-auth.hidden { display: none !important; }
 
 .auth-box {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 36px 32px;
+  border-radius: 20px;
+  padding: 40px 36px;
   width: 100%;
-  max-width: 420px;
+  max-width: 400px;
   text-align: center;
+  box-shadow: 0 24px 60px rgba(0,0,0,.5);
 }
 
-.auth-logo { font-size: 3rem; margin-bottom: 8px; }
-.auth-box h1 { font-size: 1.5rem; font-weight: 800; color: var(--accent); }
-.auth-sub { color: var(--text2); font-size: .85rem; margin-top: 4px; margin-bottom: 24px; }
+.auth-logo { font-size: 3.2rem; margin-bottom: 10px; }
+.auth-box h1 { font-size: 1.6rem; font-weight: 800; color: var(--accent); letter-spacing: -.02em; }
+.auth-sub { color: var(--text2); font-size: .82rem; margin-top: 4px; margin-bottom: 28px; }
 
+/* Abas */
 .auth-tabs {
   display: flex;
   background: var(--bg);
-  border-radius: 8px;
+  border-radius: 10px;
   padding: 4px;
   gap: 4px;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 .auth-tab {
   flex: 1;
   background: transparent;
   border: none;
   color: var(--text2);
-  padding: 8px;
-  border-radius: 6px;
+  padding: 9px;
+  border-radius: 7px;
   cursor: pointer;
   font-size: .9rem;
-  transition: all .15s;
+  font-weight: 500;
+  transition: all .2s;
 }
+.auth-tab:hover { color: var(--text); }
 .auth-tab.active {
   background: var(--accent2);
   color: #fff;
-  font-weight: 600;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(14,165,233,.4);
 }
 
+/* Forms — esconde o inativo com !important */
 .auth-form { text-align: left; }
-.auth-form .form-group { margin-bottom: 14px; }
-.btn-block { width: 100%; margin-top: 6px; padding: 11px; font-size: 1rem; }
+.auth-form.hidden { display: none !important; }
+
+/* Inputs customizados dentro do auth */
+.auth-form .form-group {
+  margin-bottom: 16px;
+}
+.auth-form .form-group label {
+  display: block;
+  font-size: .78rem;
+  font-weight: 600;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom: 6px;
+}
+.auth-form .input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.auth-form .input-wrap .input-icon {
+  position: absolute;
+  left: 13px;
+  font-size: 1rem;
+  pointer-events: none;
+  opacity: .6;
+}
+.auth-form .input-wrap input {
+  width: 100%;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 11px 14px 11px 38px;
+  font-size: .95rem;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+  /* força fundo escuro mesmo com autocomplete */
+  -webkit-text-fill-color: var(--text);
+  caret-color: var(--accent);
+}
+.auth-form .input-wrap input:-webkit-autofill,
+.auth-form .input-wrap input:-webkit-autofill:hover,
+.auth-form .input-wrap input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #0f172a inset !important;
+  -webkit-text-fill-color: #f1f5f9 !important;
+  border-color: var(--border) !important;
+}
+.auth-form .input-wrap input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(56,189,248,.15);
+}
+.auth-form .input-wrap input::placeholder { color: #475569; }
+
+.btn-block {
+  width: 100%;
+  margin-top: 8px;
+  padding: 13px;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 10px;
+  letter-spacing: .02em;
+}
 
 /* ══════════════════════════════════════════
    USER / HEADER EXTRAS

@@ -35,11 +35,17 @@
       <div id="form-login" class="auth-form">
         <div class="form-group">
           <label>E-mail</label>
-          <input type="email" id="login-email" placeholder="seu@email.com" autocomplete="email" />
+          <div class="input-wrap">
+            <span class="input-icon">✉️</span>
+            <input type="email" id="login-email" placeholder="seu@email.com" autocomplete="email" />
+          </div>
         </div>
         <div class="form-group">
           <label>Senha</label>
-          <input type="password" id="login-senha" placeholder="••••••••" autocomplete="current-password" />
+          <div class="input-wrap">
+            <span class="input-icon">🔒</span>
+            <input type="password" id="login-senha" placeholder="Sua senha" autocomplete="current-password" />
+          </div>
         </div>
         <button class="btn btn-primary btn-block" id="btn-login" data-label="Entrar" onclick="fazerLogin()">Entrar</button>
       </div>
@@ -48,19 +54,31 @@
       <div id="form-cadastro" class="auth-form hidden">
         <div class="form-group">
           <label>Seu nome</label>
-          <input type="text" id="cad-nome" placeholder="Como quer aparecer no ranking" maxlength="30" />
+          <div class="input-wrap">
+            <span class="input-icon">👤</span>
+            <input type="text" id="cad-nome" placeholder="Como quer aparecer no ranking" maxlength="30" autocomplete="off" />
+          </div>
         </div>
         <div class="form-group">
           <label>E-mail</label>
-          <input type="email" id="cad-email" placeholder="seu@email.com" autocomplete="email" />
+          <div class="input-wrap">
+            <span class="input-icon">✉️</span>
+            <input type="email" id="cad-email" placeholder="seu@email.com" autocomplete="email" />
+          </div>
         </div>
         <div class="form-group">
           <label>Senha</label>
-          <input type="password" id="cad-senha" placeholder="mínimo 6 caracteres" autocomplete="new-password" />
+          <div class="input-wrap">
+            <span class="input-icon">🔒</span>
+            <input type="password" id="cad-senha" placeholder="Mínimo 6 caracteres" autocomplete="new-password" />
+          </div>
         </div>
         <div class="form-group">
           <label>Código de convite</label>
-          <input type="text" id="cad-convite" placeholder="Peça o código para o organizador" />
+          <div class="input-wrap">
+            <span class="input-icon">🎟️</span>
+            <input type="text" id="cad-convite" placeholder="Peça o código ao organizador" autocomplete="off" />
+          </div>
         </div>
         <button class="btn btn-primary btn-block" id="btn-cadastro" data-label="Criar conta" onclick="fazerCadastro()">Criar conta</button>
       </div>
